@@ -9,6 +9,17 @@ struct Simple_number {
 	size_t lenght;
 	std::string str;
 };
+void check_input_file(std::ifstream& fin) {
+	if (!fin.good()) {
+		throw "file is not exist\n";
+	}
+	if (!fin) {
+		throw "input file error\n";
+	}
+	if (fin.peek() == EOF) {
+		throw "File is empty\n";
+	}
+}
 bool is_simple(int n) {
 	if (n < 2) return false;
 
@@ -48,17 +59,20 @@ std::string Find_word(std::string& str, std::string& delim, size_t& pos) {
 }
 
 int main() {
+
+	try {
 	std::ofstream fout("out.txt");
 	std::ifstream fin("in.txt");
+	check_input_file(fin);
 	std::string delimeters;
 	std::getline(fin, delimeters);
 	std::string str;
-	fout << delimeters <<'\n';
+	fout << delimeters << '\n';
 
-	while (std::getline(fin,str)) {
-		
+		while (std::getline(fin, str)) {
+
 		Simple_number max_num{ 0 };
-		Simple_number min_num{INT64_MAX};
+		Simple_number min_num{ INT64_MAX };
 		size_t pos_of_word = str.find_first_not_of(delimeters);
 		size_t counter_numbers = 0;
 		while (pos_of_word < str.size()) {
@@ -82,7 +96,7 @@ int main() {
 					++counter_numbers;
 				}
 			}
-			pos_of_word = word.length() + start_pos +1;
+			pos_of_word = word.length() + start_pos + 1;
 		}
 		if (counter_numbers >= 2) {
 			if (min_num.pos > max_num.pos) {
@@ -98,8 +112,11 @@ int main() {
 		else {
 			fout << "*" << str << '\n';
 		}
+		}
 	}
-
+	catch (const char* e) {
+		std::cerr << e;
+	}
 
 
 	return 0;
